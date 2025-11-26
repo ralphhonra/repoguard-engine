@@ -94,7 +94,18 @@ class AIAnalyzer:
 
 def _parse_ai_response(content: str) -> Dict[str, Any]:
     try:
-        payload = json.loads(content)
+        # CLEANUP: Strip Markdown formatting if the AI adds it
+        cleaned_content = content.strip()
+        if cleaned_content.startswith("```json"):
+            cleaned_content = cleaned_content[7:]
+        if cleaned_content.startswith("```"):
+            cleaned_content = cleaned_content[3:]
+        if cleaned_content.endswith("```"):
+            cleaned_content = cleaned_content[:-3]
+        
+        payload = json.loads(cleaned_content.strip())
+        
+        # ... (Rest of the logic stays the same) ...
         raw_findings = payload.get("findings", [])
         normalized_findings: List[Dict[str, Any]] = []
         for item in raw_findings:
@@ -116,6 +127,6 @@ def _parse_ai_response(content: str) -> Dict[str, Any]:
             "summary": payload.get("summary") or payload.get("opinion", "AI summary unavailable."),
         }
     except (ValueError, TypeError) as exc:
-        LOGGER.error("Invalid AI response payload: %s", exc)
+        LOGGER.error("Invalid AI response payload. Raw content: %s | Error: %s", content, exc)
         return {"score": None, "findings": [], "summary": "AI analysis parsing failed."}
 

@@ -13,6 +13,7 @@ MONITORED_FILES = {
     "pyproject.toml",
     "poetry.lock",
     "Dockerfile",
+    "pom.xml"
 }
 
 KNOWN_SAFE_PACKAGES = [
@@ -169,6 +170,16 @@ def _extract_package_name(file_path: str, content: str) -> str:
     if lowered.endswith("package.json"):
         if ":" in content:
             return content.split(":")[0].strip().strip('"').strip("'").strip(",")
+
+    # NEW: Java Maven Support
+    if lowered.endswith("pom.xml"):
+        # Simple check for <artifactId>...</artifactId>
+        if "artifactId" in content:
+            # Extract text between tags >...<
+            try:
+                return content.split(">")[1].split("<")[0]
+            except IndexError:
+                return content.strip()
 
     if lowered.endswith("dockerfile"):
         tokens = content.split()

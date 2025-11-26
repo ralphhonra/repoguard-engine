@@ -52,6 +52,15 @@ def evaluate_static_risks(diff_text: str) -> Dict[str, Any]:
             if _is_ignored_file(current_file):
                 continue
 
+            if any(s in current_file.lower() for s in ["auth", "login", "crypto", "payment", "security"]):
+                 findings.append({
+                    "file": current_file,
+                    "line": 0, 
+                    "issue": "Modification to critical system component.",
+                    "severity": "medium", 
+                    "tag": "sensitive_file"
+                 })
+
             churn_track[current_file] = churn_track.get(current_file, 0) + 1
             node_index = len(file_nodes[current_file]) - 1
             findings.extend(
