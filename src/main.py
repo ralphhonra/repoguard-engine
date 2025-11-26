@@ -3,10 +3,10 @@ import os
 from pathlib import Path
 from typing import Any, Dict, List, Mapping
 
-from adapters import detect_provider, fetch_context, post_comment
-from ai_analyzer import AIAnalyzer
-from dependency_checker import evaluate_supply_chain
-from risk_engine import evaluate_static_risks
+from src.adapters import detect_provider, fetch_context, post_comment
+from src.ai_analyzer import AIAnalyzer
+from src.dependency_checker import evaluate_supply_chain
+from src.risk_engine import evaluate_static_risks
 
 LOG_PATH = Path("repo_guard.log")
 
